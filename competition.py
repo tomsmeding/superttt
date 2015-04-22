@@ -1,4 +1,19 @@
 #!/usr/bin/env python3
+"""
+Usage: ./competition.py [options] [competitionfile]
+
+The <competitionfile> should contain two lines, which are the two commands to
+execute as players.
+
+The script writes a competitionlog to competitions/game_p1_vs_p2.txt (with p1
+and p2 replaced by their respective commands).
+
+Options:
+  -h   Help. What you're looking at
+  -q   Quiet. Don't print so much
+  -v   View the competition afterwards using ./viewcompetition
+"""
+
 import os,sys,subprocess,shlex,re,time
 
 #Function definitions
@@ -116,10 +131,14 @@ else:
 	for arg in sys.argv[1:]: #skip script name
 		if len(arg)>1 and arg[0]=="-":
 			for c in arg[1:]: #skip "-"
-				if c=="q": quiet=True
+				if c=="h":
+					print(__doc__)
+					sys.exit(0)
+				elif c=="q": quiet=True
 				elif c=="v": viewcompetition=True
 				else:
 					print("Unrecognised flag '"+c+"'.")
+					print(__doc__)
 					sys.exit(1)
 		elif fname=="":
 			fname=arg
