@@ -1,2 +1,0 @@
-./stttrecur
-./stttfirst
