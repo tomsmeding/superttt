@@ -191,8 +191,8 @@ long long heuristic(uint8_t *board,int player){
 //long long heuristic(uint8_t *board,int player){numHeuristicCalled++;return rand()%3-1;}
 
 Move domove(uint8_t *board,Move othermove){
-	Move lefttop,m,maxat[9];
-	int non,maxatidx,won;
+	Move lefttop,m,maxat[64];
+	int non,maxatidx,won,searchsize;
 	long long pts,max;
 	numHeuristicCalled=0;
 	non=smallnonant(othermove);
@@ -204,16 +204,12 @@ Move domove(uint8_t *board,Move othermove){
 	maxatidx=0;
 	max=-1e9;
 	if(nonantfull(board,non)){
-		vector<pair<int,int>> empty;
-		int idx;
-		for(m.y=0;m.y<9;m.y++)for(m.x=0;m.x<9;m.x++)if(board[9*m.y+m.x]==NONE)empty.push_back({m.x,m.y});
-		idx=rand()%empty.size();
-		m.x=empty[idx].first;
-		m.y=empty[idx].second;
-		return m;
-	}
-	for(m.y=lefttop.y;m.y<lefttop.y+3;m.y++){
-		for(m.x=lefttop.x;m.x<lefttop.x+3;m.x++){
+		lefttop.x=lefttop.y=0;
+		searchsize=9;
+		cerr<<"Nonant full, taking full board and less depth"<<endl;
+	} else searchsize=3;
+	for(m.y=lefttop.y;m.y<lefttop.y+searchsize;m.y++){
+		for(m.x=lefttop.x;m.x<lefttop.x+searchsize;m.x++){
 			if(board[9*m.y+m.x]==NONE){
 				won=haswonsmall(board,non,false);
 				board[9*m.y+m.x]=ME;
@@ -222,7 +218,7 @@ Move domove(uint8_t *board,Move othermove){
 				else if(pts==ME)pts=SCORE_SMALLWIN;
 				else if(pts==OTHER)pts=-SCORE_SMALLWIN;
 				else pts=0;
-				pts+=-0.9*domoveRecurseOther(board,smallnonant(m),maxdepth-1);
+				pts+=-0.9*domoveRecurseOther(board,smallnonant(m),maxdepth-1-2*(searchsize==9));
 				cerr<<"{"<<m.x<<","<<m.y<<"}: pts="<<pts<<endl;
 				if(pts==max){
 					maxat[maxatidx].x=m.x;
@@ -238,7 +234,7 @@ Move domove(uint8_t *board,Move othermove){
 			}
 		}
 	}
-	cerr<<"numHeuristicCalled="<<numHeuristicCalled<<endl;
+	cerr<<"numHeuristicCalled="<<numHeuristicCalled<<" maxatidx="<<maxatidx<<endl;
 	if(maxatidx==0){
 		m.x=m.y=-2;
 		return m;
@@ -253,12 +249,17 @@ long long domoveRecurseOther(uint8_t *board,int non,int depth){
 	//cerr<<"dmROther("<<depth<<") entry"<<endl;
 	Move lefttop,m,maxat;
 	long long pts,max;
-	int won;
+	int won,searchsize;
 	if(depth<=0){
 		return heuristic(board,OTHER);
 	}
 	lefttop.x=lefttop.y=0;
-	moveIntoNonant(lefttop,non);
+	if(nonantfull(board,non)){
+		searchsize=9;
+	} else {
+		moveIntoNonant(lefttop,non);
+		searchsize=3;
+	}
 	maxat.x=maxat.y=-1;
 	max=-1e9;
 	for(m.y=lefttop.y;m.y<lefttop.y+3;m.y++){
@@ -271,7 +272,7 @@ long long domoveRecurseOther(uint8_t *board,int non,int depth){
 				else if(pts==OTHER)pts=SCORE_SMALLWIN;
 				else if(pts==ME)pts=-SCORE_SMALLWIN;
 				else pts=0;
-				pts+=-0.9*domoveRecurseMe(board,smallnonant(m),depth-1);
+				pts+=-0.9*domoveRecurseMe(board,smallnonant(m),depth-1-(searchsize==9));
 				if(pts>max){
 					maxat.x=m.x;
 					maxat.y=m.y;
@@ -318,12 +319,17 @@ long long domoveRecurseMe(uint8_t *board,int non,int depth){
 	//cerr<<"dmRMe("<<depth<<") entry"<<endl;
 	Move lefttop,m,maxat;
 	long long pts,max;
-	int won;
+	int won,searchsize;
 	if(depth<=0){
 		return heuristic(board,ME);
 	}
 	lefttop.x=lefttop.y=0;
-	moveIntoNonant(lefttop,non);
+	if(nonantfull(board,non)){
+		searchsize=9;
+	} else {
+		moveIntoNonant(lefttop,non);
+		searchsize=3;
+	}
 	maxat.x=maxat.y=-1;
 	max=-1e9;
 	for(m.y=lefttop.y;m.y<lefttop.y+3;m.y++){
@@ -336,7 +342,7 @@ long long domoveRecurseMe(uint8_t *board,int non,int depth){
 				else if(pts==ME)pts=SCORE_SMALLWIN;
 				else if(pts==OTHER)pts=-SCORE_SMALLWIN;
 				else pts=0;
-				pts+=-0.9*domoveRecurseOther(board,smallnonant(m),depth-1);
+				pts+=-0.9*domoveRecurseOther(board,smallnonant(m),depth-1-(searchsize==9));
 				if(pts>max){
 					maxat.x=m.x;
 					maxat.y=m.y;
@@ -378,6 +384,7 @@ int main(void){
 			break;
 		}
 		move=domove(board,move);
+		cerr<<"domove returned move="<<(9*move.y+move.x)<<": {"<<move.y<<","<<move.x<<'}'<<endl;
 		if(validatemove(move,board)){
 			board[9*move.y+move.x]=ME;
 			cout<<move.x<<' '<<move.y<<endl;
