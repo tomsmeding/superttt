@@ -159,6 +159,10 @@ Move domove(uint8_t *board,Move othermove){
 			for(m.x=lefttop.x;m.x<lefttop.x+3;m.x++)
 				if(board[9*m.y+m.x]==NONE)empty.push_back({m.x,m.y});
 	}
+	if(empty.size()==0){
+		m.x=m.y=-2;
+		return m;
+	}
 	idx=rand()%empty.size();
 	m.x=empty[idx].first;
 	m.y=empty[idx].second;
