@@ -67,9 +67,8 @@ void Board::doMove( Move move ) {
 void Board::undoMove( Move move, int alpha ) {
 	beta_square[move.x+9*move.y] = 0;
 	move_count -= 1;
-	int b = move.getBetaNonant();
-	alpha_square[b] = 0;
-	alpha_square[b] = betaWin( b );
+	alpha_square[alpha] = 0;
+	alpha_square[alpha] = betaWin( alpha );
 	alpha_target = alpha;
 }
 
@@ -248,6 +247,11 @@ int main() {
 		board.print();
 		#endif
 		board.doMove( importMove() );
+		#ifdef DEBUG
+		for( int i = 0; i < 9; ++i )
+			ferr << board.alpha_square[i] << " ";
+		ferr << endl;
+		#endif
 		if( board.alphaWin() )
 			break;
 		#ifdef VISUAL
@@ -255,6 +259,11 @@ int main() {
 		#endif
 		minimax( board, move, 9 );
 		board.doMove( move );
+		#ifdef DEBUG
+		for( int i = 0; i < 9; ++i )
+			ferr << board.alpha_square[i] << " ";
+		ferr << endl;
+		#endif
 		exportMove( move );
 	}
 	board.print();
