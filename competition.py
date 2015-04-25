@@ -228,6 +228,9 @@ nextnonant=-1
 nummoves=0
 endgame=False
 
+p1totaltime=0
+p2totaltime=0
+
 p1in.write(b"go\n");
 try:
 	p1in.flush()
@@ -255,6 +258,22 @@ while True:
 			if len(line)>0:
 				break
 			time.sleep(0.1)
+			timeoutfail=False
+			if player==1:
+				p1totaltime+=0.1
+				if p1totaltime>=50:
+					timeoutfail=True
+			else:
+				p2totaltime+=0.1
+				if p2totaltime>=50:
+					timeoutfail=True
+			if timeoutfail:
+				print("P"+str(player)+" timed out!")
+				try: p1proc.terminate()
+				except: pass
+				try: p2proc.terminate()
+				except: pass
+				sys.exit(1)
 		move=parsemove(line)
 		if move==False:
 			print("P"+str(player)+" made an invalid move: '"+line+"'.")
@@ -282,6 +301,7 @@ while True:
 			else: raise e
 		if not quiet:
 			print("P"+str(player)+": "+str(move[0])+" "+str(move[1])+"  ",end="")
+			sys.stdout.flush()
 		if complog:
 			logfile.write("P"+str(player)+": "+str(move[0])+" "+str(move[1])+"\n")
 		nummoves+=1
