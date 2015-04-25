@@ -145,6 +145,6 @@ int main(int argc,char **argv){
 			return 0;
 		}
 	}
-	cout<<"Log file ended prematurely."<<endl;
+	cout<<"\x1B[17;1HLog file ended prematurely."<<endl;
 	return 1;
 }
