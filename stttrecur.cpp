@@ -18,7 +18,7 @@ struct Move{
 	short x=0,y=0;
 };
 
-int maxdepth=5;
+int maxdepth=6;
 
 bool haswonsmallDidQueryCache=false;
 
@@ -191,7 +191,7 @@ long long heuristic(uint8_t *board,int player){
 //long long heuristic(uint8_t *board,int player){numHeuristicCalled++;return rand()%3-1;}
 
 Move domove(uint8_t *board,Move othermove){
-	Move lefttop,m,maxat[64];
+	Move lefttop,m,maxat[63];
 	int non,maxatidx,won,searchsize;
 	long long pts,max;
 	numHeuristicCalled=0;
@@ -362,7 +362,9 @@ int main(void){
 	int won,diff_usec;
 	char c;
 	struct timeval tv_start,tv_end;
-	srand(time(NULL));
+	gettimeofday(&tv_start,NULL);
+	cerr<<"seed="<<(1000000*tv_start.tv_sec+tv_start.tv_usec)<<endl;
+	srand(1000000*tv_start.tv_sec+tv_start.tv_usec);
 	uint8_t *board=new uint8_t[81]();
 	getline(cin,line);
 	if(line=="go"){
@@ -384,7 +386,7 @@ int main(void){
 			break;
 		}
 		move=domove(board,move);
-		cerr<<"domove returned move="<<(9*move.y+move.x)<<": {"<<move.y<<","<<move.x<<'}'<<endl;
+		cerr<<"domove returned move="<<(9*move.y+move.x)<<": {"<<move.x<<","<<move.y<<'}'<<endl;
 		if(validatemove(move,board)){
 			board[9*move.y+move.x]=ME;
 			cout<<move.x<<' '<<move.y<<endl;
@@ -405,7 +407,7 @@ int main(void){
 		}
 		gettimeofday(&tv_end,NULL);
 		diff_usec=1e6*(tv_end.tv_sec-tv_start.tv_sec)+tv_end.tv_usec-tv_start.tv_usec;
-		if(diff_usec<25e4)maxdepth++; //25e4==0.25e6
+		if(diff_usec<25e4&&maxdepth<10)maxdepth++; //25e4==0.25e6
 		else if(diff_usec>1e6)maxdepth--;
 	}
 	delete[] board;
