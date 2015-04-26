@@ -242,7 +242,7 @@ int main() {
 		board.doMove( Move( 4, 4 ) );
 		exportMove( Move( 4, 4 ) );
 	}
-	while( !board.alphaWin() ) {
+	while( /*!board.alphaWin()*/ 1 ) {
 		#ifdef VISUAL
 		board.print();
 		#endif
@@ -252,8 +252,8 @@ int main() {
 			ferr << board.alpha_square[i] << " ";
 		ferr << endl;
 		#endif
-		if( board.alphaWin() )
-			break;
+		//if( board.alphaWin() )
+		//	break;
 		#ifdef VISUAL
 		board.print();
 		#endif
@@ -266,5 +266,4 @@ int main() {
 		#endif
 		exportMove( move );
 	}
-	board.print();
 }

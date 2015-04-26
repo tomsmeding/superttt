@@ -51,17 +51,21 @@ fi
 
 
 
-function green {
-	printf '\x1B[33m%s\x1B[0m' $1
-}
+if [[ isatty ]]; then
+	function green {
+		printf '\x1B[33m%s\x1B[0m' $1
+	}
+else
+	function green {
+		printf '%s' $1
+	}
+fi
 
 
 
 for p1 in $BINARIES; do
 	for p2 in $BINARIES; do
-		if [[ $p1 == $p2 ]]; then
-			continue
-		fi
+		[[ $p1 == $p2 ]] && continue
 		p1pretty=$(echo "$p1" | sed 's/[^a-zA-Z0-9 ]//g')
 		p2pretty=$(echo "$p2" | sed 's/[^a-zA-Z0-9 ]//g')
 		COMPFILE="competitionstubs/game_${p1pretty}_vs_${p2pretty}.sh"
@@ -70,7 +74,7 @@ for p1 in $BINARIES; do
 printf "%s\n%s\n" $p1 $p2 | ./competition.py -q -
 status=$?
 if [[ \$status != 0 ]]; then
-	echo "$p1 - $p2 : ERROR $status     (0-0)" >$FIFONAME
+	echo \$(date +"$DATE_FMT") "$p1 - $p2 : ERROR $status     (0-0)" >$FIFONAME
 	exit 1
 fi
 lastline=\$(tail -n1 "competitions/game_${p1pretty}_vs_${p2pretty}.txt")

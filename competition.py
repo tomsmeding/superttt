@@ -89,7 +89,7 @@ def haswon():
 	p=won[0]
 	if p!=0 and won[3]==p and won[6]==p: return p
 	p=won[1]
-	if p!=0 and won[4]==p and won[6]==p: return p
+	if p!=0 and won[4]==p and won[7]==p: return p
 	p=won[2]
 	if p!=0 and won[5]==p and won[8]==p: return p
 	# \.

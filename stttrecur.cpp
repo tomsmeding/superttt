@@ -18,7 +18,7 @@ struct Move{
 	short x=0,y=0;
 };
 
-int maxdepth=6;
+int maxdepth=7;
 
 bool haswonsmallDidQueryCache=false;
 
@@ -113,7 +113,7 @@ int haswon(uint8_t *board){
 	p=haswonsmall(board,0,false);
 	if(p!=NONE&&haswonsmall(board,3,false)==p&&haswonsmall(board,6,false)==p)return p;
 	p=haswonsmall(board,1,false);
-	if(p!=NONE&&haswonsmall(board,4,false)==p&&haswonsmall(board,6,false)==p)return p;
+	if(p!=NONE&&haswonsmall(board,4,false)==p&&haswonsmall(board,7,false)==p)return p;
 	p=haswonsmall(board,2,false);
 	if(p!=NONE&&haswonsmall(board,5,false)==p&&haswonsmall(board,8,false)==p)return p;
 	// \.
@@ -365,6 +365,7 @@ int main(void){
 	gettimeofday(&tv_start,NULL);
 	cerr<<"seed="<<(1000000*tv_start.tv_sec+tv_start.tv_usec)<<endl;
 	srand(1000000*tv_start.tv_sec+tv_start.tv_usec);
+	//srand(1430043526520409);
 	uint8_t *board=new uint8_t[81]();
 	getline(cin,line);
 	if(line=="go"){
@@ -406,9 +407,9 @@ int main(void){
 			break;
 		}
 		gettimeofday(&tv_end,NULL);
-		diff_usec=1e6*(tv_end.tv_sec-tv_start.tv_sec)+tv_end.tv_usec-tv_start.tv_usec;
+		/*diff_usec=1e6*(tv_end.tv_sec-tv_start.tv_sec)+tv_end.tv_usec-tv_start.tv_usec;
 		if(diff_usec<25e4&&maxdepth<10)maxdepth++; //25e4==0.25e6
-		else if(diff_usec>1e6)maxdepth--;
+		else if(diff_usec>1e6)maxdepth--;*/
 	}
 	delete[] board;
 	return 0;

@@ -31,7 +31,7 @@ for fname in files:
 	elif result=="P1 won":
 		scores[p1name]+=3
 		scores[p2name]+=1
-	elif result=="P1 won":
+	elif result=="P2 won":
 		scores[p1name]+=1
 		scores[p2name]+=3
 scores=sorted(scores.items(),key=lambda item:-item[1]) #sort reverse on scores

@@ -113,7 +113,7 @@ int haswon(uint8_t *board){
 	p=haswonsmall(board,0,false);
 	if(p!=NONE&&haswonsmall(board,3,false)==p&&haswonsmall(board,6,false)==p)return p;
 	p=haswonsmall(board,1,false);
-	if(p!=NONE&&haswonsmall(board,4,false)==p&&haswonsmall(board,6,false)==p)return p;
+	if(p!=NONE&&haswonsmall(board,4,false)==p&&haswonsmall(board,7,false)==p)return p;
 	p=haswonsmall(board,2,false);
 	if(p!=NONE&&haswonsmall(board,5,false)==p&&haswonsmall(board,8,false)==p)return p;
 	// \.
