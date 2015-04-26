@@ -9,6 +9,7 @@ The script writes a competitionlog to competitions/game_p1_vs_p2.txt (with p1
 and p2 replaced by their respective commands).
 
 Options:
+  -C   Do not write a Competition log
   -h   Help. What you're looking at
   -q   Quiet. Don't print so much
   -v   View the competition afterwards using ./viewcompetition
@@ -120,18 +121,21 @@ def printboard():
 		if y%3==2:
 			print("+-------+-------+-------+");
 
-#Getting entries
+#Getting entries and flags
 
 fname=""
 quiet=False
 viewcompetition=False
+complog=True
 if len(sys.argv)==1: #no args
 	fname="competition.txt"
 else:
 	for arg in sys.argv[1:]: #skip script name
 		if len(arg)>1 and arg[0]=="-":
 			for c in arg[1:]: #skip "-"
-				if c=="h":
+				if c=="C":
+					complog=False
+				elif c=="h":
 					print(__doc__)
 					sys.exit(0)
 				elif c=="q": quiet=True
@@ -195,31 +199,24 @@ except Exception as e:
 
 #Set up competition log
 
-complog=True
-
 if not os.path.exists("competitions"):
 	try:
 		os.mkdir("competitions")
 	except:
-		complog=False
-		print("Warning: could not create log directory 'competitions'.")
+		print("Error: could not create log directory 'competitions'.")
+		sys.exit(1)
 elif not os.path.isdir("competitions"):
 	#Apparently, there's a file named "competitions". Bastard.
-	complog=False
-	print("Warning: an existing file prohibits creation of log directory 'competitions'.")
+	print("Error: an existing file prohibits creation of log directory 'competitions'.")
+	sys.exit(1)
 
-if complog:
-	try:
-		logfname="competitions/game_"+re.sub(r"[^a-zA-Z0-9 ]","",p1fname)+"_vs_"+re.sub(r"[^a-zA-Z0-9 ]","",p2fname)+".txt"
-		logfile=open(logfname,mode="w")
-		logfile.write("P1: "+p1fname+"\nP2: "+p2fname+"\n")
-	except:
-		complog=False
-		print("Warning: could not open log file '"+logfname+"'.")
-
-if not complog and viewcompetition:
-	print("Warning: cannot view competition afterwards (-v) if logging is disabled.")
-	viewcompetition=False
+try:
+	logfname="competitions/game_"+re.sub(r"[^a-zA-Z0-9 ]","",p1fname)+"_vs_"+re.sub(r"[^a-zA-Z0-9 ]","",p2fname)+".txt"
+	logfile=open(logfname,mode="w")
+	logfile.write("P1: "+p1fname+"\nP2: "+p2fname+"\n")
+except:
+	print("Error: could not open log file '"+logfname+"'.")
+	sys.exit(1)
 
 #Start competition
 
