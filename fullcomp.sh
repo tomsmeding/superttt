@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 find competitions -type f -delete
 
-BINARIES=./stttfirst ./stttrandom ./stttrecur ./stttswag
+BINARIES="./stttfirst ./stttrandom ./stttrecur ./stttswag"
 
 for p1 in $BINARIES; do
 	for p2 in $BINARIES; do
