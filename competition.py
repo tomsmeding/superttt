@@ -302,32 +302,36 @@ while True:
 			endgame=True
 			break
 		applymove(move,player)
-		nextnonant=smallnonant(move)
-		if nonantfull(nextnonant):
-			nextnonant=-1
-		pBin.write((str(move[0])+" "+str(move[1])+"\n").encode("ascii"))
-		try:
-			pBin.flush()
-		except IOError as e:
-			if e.errno==os.errno.EINVAL:
-				print("Program P"+str(3-player)+" quit prematurely.")
-				try:
-					if player==1: p2proc.terminate()
-					else: p1proc.terminate()
-				except: pass
-				sys.exit(1)
-			else: raise e
-		if not quiet:
-			print("P"+str(player)+": "+str(move[0])+" "+str(move[1])+"  ",end="")
-			sys.stdout.flush()
-		if complog:
-			logfile.write("P"+str(player)+": "+str(move[0])+" "+str(move[1])+"\n")
+
+		won=haswon()
+
+		if not won: #writing the move to the next player if it was a winning move is _quite_ useless.
+			nextnonant=smallnonant(move)
+			if nonantfull(nextnonant):
+				nextnonant=-1
+			pBin.write((str(move[0])+" "+str(move[1])+"\n").encode("ascii"))
+			try:
+				pBin.flush()
+			except IOError as e:
+				if e.errno==os.errno.EINVAL:
+					print("Program P"+str(3-player)+" quit prematurely.")
+					try:
+						if player==1: p2proc.terminate()
+						else: p1proc.terminate()
+					except: pass
+					sys.exit(1)
+				else: raise e
+			if not quiet:
+				print("P"+str(player)+": "+str(move[0])+" "+str(move[1])+"  ",end="")
+				sys.stdout.flush()
+			if complog:
+				logfile.write("P"+str(player)+": "+str(move[0])+" "+str(move[1])+"\n")
+
 		nummoves+=1
 		if nummoves==81:
 			if not quiet:
 				print("")
 				printboard()
-			won=haswon()
 			if won!=0:
 				if not quiet:
 					print("\nP"+str(won)+" has won this game!")
@@ -340,7 +344,6 @@ while True:
 					logfile.write("Tie\n")
 			endgame=True
 			break
-		won=haswon()
 		if won!=0:
 			if not quiet:
 				print("")
