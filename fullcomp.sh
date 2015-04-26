@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-find competitions -type f -delete
-
 BINARIES="./stttfirst ./stttrandom ./stttrecur ./stttswag"
+
+if [[ ! -e competitions ]]; then
+	mkdir competitions || exit 1
+fi
+
+find competitions -type f -delete
 
 for p1 in $BINARIES; do
 	for p2 in $BINARIES; do
@@ -12,9 +16,8 @@ for p1 in $BINARIES; do
 		./competition.py $@
 		status=$?
 		if [[ $status != 0 ]]; then
-			echo "$p1 - $p2 : ERR $status (0-0)"
-			echo "NON-ZERO EXIT STATUS ${status}!" >&2
-			exit 1
+			echo "$p1 - $p2 : ERROR $status     (0-0)"
+			continue
 		fi
 		p1pretty=$(echo "$p1" | sed 's/[^a-zA-Z0-9 ]//g')
 		p2pretty=$(echo "$p2" | sed 's/[^a-zA-Z0-9 ]//g')
