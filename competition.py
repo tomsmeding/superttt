@@ -199,9 +199,10 @@ except:
 
 #Start programs
 
-print("Running this competition with:")
-print("P1 (X): '"+p1fname+"'")
-print("P2 (O): '"+p2fname+"'")
+if not quiet:
+	print("Running this competition with:")
+	print("P1 (X): '"+p1fname+"'")
+	print("P2 (O): '"+p2fname+"'")
 
 try:
 	p1proc=subprocess.Popen(shlex.split(p1fname),stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=p1errlog,bufsize=1,shell=True) #line-buffered
@@ -328,11 +329,13 @@ while True:
 				printboard()
 			won=haswon()
 			if won!=0:
-				print("\nP"+str(won)+" has won this game!")
+				if not quiet:
+					print("\nP"+str(won)+" has won this game!")
 				if complog:
 					logfile.write("P"+str(won)+" won\n")
 			else:
-				print("\nThe board is full, a tie results; the game shall now be terminated.")
+				if not quiet:
+					print("\nThe board is full, a tie results; the game shall now be terminated.")
 				if complog:
 					logfile.write("Tie\n")
 			endgame=True
@@ -343,7 +346,7 @@ while True:
 				print("")
 				printboard()
 				print("")
-			print("P"+str(won)+" has won this game!")
+				print("P"+str(won)+" has won this game!")
 			if complog:
 				logfile.write("P"+str(won)+" won\n")
 			endgame=True
