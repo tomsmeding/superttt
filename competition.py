@@ -175,23 +175,43 @@ else:
 		sys.exit(1)
 	f.close()
 
+#Set up player logs
+
+if not os.path.exists("playerlogs"):
+	try:
+		os.mkdir("playerlogs")
+	except:
+		print("Error: could not create log directory 'playerlogs'.")
+		sys.exit(1)
+elif not os.path.isdir("playerlogs"):
+	#Apparently, there's a file named "playerlogs". Bastard.
+	print("Error: an existing file prohibits creation of log directory 'playerlogs'.")
+	sys.exit(1)
+
+try:
+	logfname="playerlogs/"+re.sub(r"[^a-zA-Z0-9 ]","",p1fname)+"_white_vs_"+re.sub(r"[^a-zA-Z0-9 ]","",p2fname)+".txt"
+	p1errlog=open(logfname,mode="w")
+	logfname="playerlogs/"+re.sub(r"[^a-zA-Z0-9 ]","",p2fname)+"_black_vs_"+re.sub(r"[^a-zA-Z0-9 ]","",p1fname)+".txt"
+	p2errlog=open(logfname,mode="w")
+except:
+	print("Error: could not open log file '"+logfname+"'.")
+	sys.exit(1)
+
 #Start programs
 
 print("Running this competition with:")
 print("P1 (X): '"+p1fname+"'")
 print("P2 (O): '"+p2fname+"'")
 
-devnull=open(os.devnull,mode="w")
-
 try:
-	p1proc=subprocess.Popen(shlex.split(p1fname),stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=devnull,bufsize=1,shell=True) #line-buffered
+	p1proc=subprocess.Popen(shlex.split(p1fname),stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=p1errlog,bufsize=1,shell=True) #line-buffered
 except Exception as e:
 	print("Could not execute command '"+p1fname+"'.")
 	raise e
 (p1in,p1out)=(p1proc.stdin,p1proc.stdout)
 
 try:
-	p2proc=subprocess.Popen(shlex.split(p2fname),stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=devnull,bufsize=1,shell=True) #line-buffered
+	p2proc=subprocess.Popen(shlex.split(p2fname),stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=p2errlog,bufsize=1,shell=True) #line-buffered
 except Exception as e:
 	print("Could not execute command '"+p2fname+"'.")
 	raise e
@@ -339,6 +359,8 @@ while True:
 
 if complog:
 	logfile.close()
+p1errlog.close()
+p2errlog.close()
 
 try: p1proc.terminate()
 except: pass
