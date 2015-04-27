@@ -18,7 +18,7 @@ mkfifo fullcompMT_output_fifo.fifo
 tail -F $FIFONAME &
 TAILPID=$!
 
-trap "rm $FIFONAME; kill $TAILPID; ./fullcompstats.py" EXIT
+trap "kill $TAILPID; rm $FIFONAME; ./fullcompstats.py" EXIT
 
 
 DATE_FMT="%Y-%m-%d %H:%M:%S"
